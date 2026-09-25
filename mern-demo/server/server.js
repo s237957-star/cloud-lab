@@ -1,4 +1,7 @@
-require("dotenv").config({ path: require("path").resolve(__dirname, "../.env") });
+require("dotenv").config({
+  path: require("path").resolve(__dirname, "../.env")
+});
+
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -7,22 +10,32 @@ const Student = require("./models/Student");
 
 const app = express();
 
+// ==============================
+// MIDDLEWARE
+// ==============================
 app.use(cors());
 app.use(express.json());
 
-// GET /api/hello
+// ==============================
+// TEST BACKEND
+// ==============================
 app.get("/api/hello", (req, res) => {
   res.json({
     message: "Backend is running!"
   });
 });
 
-// Câu 36: GET - Lấy danh sách sinh viên
+// ==============================
+// GET - LẤY DANH SÁCH SINH VIÊN
+// ==============================
 app.get("/api/students", async (req, res) => {
   try {
     const students = await Student.find();
+
     res.json(students);
   } catch (error) {
+    console.error("GET students error:", error);
+
     res.status(500).json({
       message: "Lỗi lấy danh sách sinh viên",
       error: error.message
@@ -30,13 +43,17 @@ app.get("/api/students", async (req, res) => {
   }
 });
 
-// Câu 37: POST - Thêm sinh viên
+// ==============================
+// POST - THÊM SINH VIÊN
+// ==============================
 app.post("/api/students", async (req, res) => {
   try {
     const student = await Student.create(req.body);
 
     res.status(201).json(student);
   } catch (error) {
+    console.error("POST student error:", error);
+
     res.status(400).json({
       message: "Lỗi thêm sinh viên",
       error: error.message
@@ -44,7 +61,9 @@ app.post("/api/students", async (req, res) => {
   }
 });
 
-// Câu 38: PUT - Cập nhật sinh viên
+// ==============================
+// PUT - CẬP NHẬT SINH VIÊN
+// ==============================
 app.put("/api/students/:id", async (req, res) => {
   try {
     const student = await Student.findByIdAndUpdate(
@@ -64,6 +83,8 @@ app.put("/api/students/:id", async (req, res) => {
 
     res.json(student);
   } catch (error) {
+    console.error("PUT student error:", error);
+
     res.status(400).json({
       message: "Lỗi cập nhật sinh viên",
       error: error.message
@@ -71,7 +92,9 @@ app.put("/api/students/:id", async (req, res) => {
   }
 });
 
-// Câu 39: DELETE - Xóa sinh viên
+// ==============================
+// DELETE - XÓA SINH VIÊN
+// ==============================
 app.delete("/api/students/:id", async (req, res) => {
   try {
     const student = await Student.findByIdAndDelete(req.params.id);
@@ -87,6 +110,8 @@ app.delete("/api/students/:id", async (req, res) => {
       student
     });
   } catch (error) {
+    console.error("DELETE student error:", error);
+
     res.status(400).json({
       message: "Lỗi xóa sinh viên",
       error: error.message
@@ -94,18 +119,26 @@ app.delete("/api/students/:id", async (req, res) => {
   }
 });
 
+// ==============================
+// PORT
+// ==============================
 const PORT = process.env.PORT || 5000;
 
-// Kết nối MongoDB rồi mới chạy Server
+// ==============================
+// START SERVER TRƯỚC
+// ==============================
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+// ==============================
+// KẾT NỐI MONGODB
+// ==============================
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("MongoDB Atlas connected successfully");
-
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
   })
   .catch((error) => {
-    console.error("MongoDB connection error:", error);
+    console.error("MongoDB connection error:", error.message);
   });

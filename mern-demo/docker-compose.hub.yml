@@ -1,8 +1,6 @@
 services:
   backend:
-    build:
-      context: .
-      dockerfile: server/Dockerfile
+    image: chibaooo/mern-backend:1.0
     container_name: mern-backend
     network_mode: host
     environment:

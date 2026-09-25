@@ -76,7 +76,7 @@ function App() {
 
   return (
     <div style={{ maxWidth: 800, margin: "40px auto" }}>
-      <h1>Quản lý sinh viên</h1>
+      <h1>Quản lý sinh viên - Version 2.0</h1>
 
       <form onSubmit={submit}>
         <input
